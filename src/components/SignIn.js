@@ -5,27 +5,27 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   '@global': {
     body: {
-      backgroundColor: theme.palette.common.white
-    }
+      backgroundColor: theme.palette.common.white,
+    },
   },
   paper: {
     marginTop: theme.spacing(20),
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   form: {
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(1, 0, 1)
-  }
+    margin: theme.spacing(1, 0, 1),
+  },
 }));
 
-export default props => {
+export default (props) => {
   const classes = useStyles();
 
   return (
@@ -33,7 +33,7 @@ export default props => {
       <CssBaseline />
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
-          MoneyLog
+          The MoneyLog
         </Typography>
         <TextField
           variant="outlined"
