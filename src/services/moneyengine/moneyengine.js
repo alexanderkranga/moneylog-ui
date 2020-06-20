@@ -157,12 +157,10 @@ export default class MoneyEngine {
 const calculateOneTimeEventValue = function (end_datetime, start_datetime) {
   if (moment(end_datetime).isSameOrAfter(this.created_date)) {
     if (start_datetime) {
-      console.log(start_datetime);
       if (moment(start_datetime).isSameOrBefore(this.created_date)) {
         return this.log_type === 'SPENT' ? this.amount * -1 : this.amount;
       }
     } else {
-      console.log(this.amount);
       return this.log_type === 'SPENT' ? this.amount * -1 : this.amount;
     }
   }

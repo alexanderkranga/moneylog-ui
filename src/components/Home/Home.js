@@ -6,18 +6,24 @@ import { Bar } from 'react-chartjs-2';
 import * as moment from 'moment';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import MoneyEngine from '../../services/moneyengine';
+import MoneyEngine from '../../services/moneyengine/moneyengine';
 import Totals from '../Totals/Totals';
 import Calculator from '../Calculator/Calculator';
 import History from '../History/History';
+import PassPhrase from '../PassPhrase/PassPhrase';
+import EncryptionService from '../../services/encryption/encryptionservice';
+
+const encryptionService = new EncryptionService();
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      moneyLogs: [],
+      rawMoneyLogs: [],
+      decryptedMoneyLogs: [],
       logToUpdate: null,
       targetDate: moment(),
+      passPhrase: '',
     };
   }
 
@@ -27,15 +33,47 @@ class Home extends Component {
     });
   };
 
+  handlePassPhraseChange = (passPhraseEvent) => {
+    const passPhrase = passPhraseEvent.target.value;
+
+    this.setState({
+      passPhrase,
+    });
+
+    if (passPhrase !== '') {
+      console.log(passPhrase);
+      const rawMoneyLogJson = this.state.rawMoneyLogs || null;
+
+      console.log(rawMoneyLogJson);
+
+      if (rawMoneyLogJson.length > 0) {
+        const decryptedMoneyLogJson = rawMoneyLogJson.map((log) =>
+          encryptionService.decryptMoneyLog(log, passPhrase)
+        );
+
+        console.log(decryptedMoneyLogJson);
+
+        this.setState({
+          decryptedMoneyLogs: decryptedMoneyLogJson,
+        });
+      }
+    }
+  };
+
   refreshMoneyLogs = async () => {
     const allLogs = await restclient.moneylog.getAllByUsername(
       this.props.username
     );
 
-    const allMoneyLogJson = await allLogs.json();
+    const allEncryptedMoneyLogJson = await allLogs.json();
+
+    const allDecryptedMoneyLogs = allEncryptedMoneyLogJson.map((log) =>
+      encryptionService.decryptMoneyLog(log, this.state.passPhrase)
+    );
 
     this.setState({
-      moneyLogs: allMoneyLogJson,
+      rawMoneyLogs: allEncryptedMoneyLogJson,
+      decryptedMoneyLogs: allDecryptedMoneyLogs,
     });
   };
 
@@ -46,7 +84,12 @@ class Home extends Component {
   submitNewLog = async (newLog) => {
     newLog = { username: this.props.username, ...newLog };
 
-    await restclient.moneylog.submitNewLog(newLog, this.props.username);
+    const encryptedLog = encryptionService.encryptMoneyLog(
+      newLog,
+      this.state.passPhrase
+    );
+
+    await restclient.moneylog.submitNewLog(encryptedLog, this.props.username);
 
     this.refreshMoneyLogs();
     this.setState({
@@ -82,7 +125,7 @@ class Home extends Component {
   };
 
   getTotalSpent = () => {
-    const allLogs = this.state.moneyLogs.filter(
+    const allLogs = this.state.decryptedMoneyLogs.filter(
       (log) => log.log_type === 'SPENT'
     );
 
@@ -132,7 +175,7 @@ class Home extends Component {
   };
 
   getTotalAvailable = (targetDate) => {
-    const allLogs = this.state.moneyLogs;
+    const allLogs = this.state.decryptedMoneyLogs;
 
     const moneyEngine = new MoneyEngine();
 
@@ -185,7 +228,7 @@ class Home extends Component {
   };
 
   getLogRows = () => {
-    return this.state.moneyLogs.map((log) => {
+    return this.state.decryptedMoneyLogs.map((log) => {
       const date = moment(log.created_date).format('MMMM DD, YYYY');
       const amountPositive = log.log_type === 'RECEIVED';
       const amount = log.amount + ' ' + log.currency.toUpperCase();
@@ -217,7 +260,7 @@ class Home extends Component {
   };
 
   getMonthlyDataset = () => {
-    const spentLogs = this.state.moneyLogs.filter(
+    const spentLogs = this.state.decryptedMoneyLogs.filter(
       (log) => log.log_type === 'SPENT'
     );
 
@@ -256,6 +299,10 @@ class Home extends Component {
   render = () => {
     return (
       <main style={{ margin: '40px 0 40px 0' }}>
+        <PassPhrase
+          passPhrase={this.state.passPhrase}
+          handlePassPhraseChange={this.handlePassPhraseChange}
+        />
         <Paper style={{ padding: '10px' }}>
           <EventForm
             submitNewLog={this.submitNewLog}
@@ -265,7 +312,7 @@ class Home extends Component {
             resetForm={this.resetForm}
           />
         </Paper>
-        {this.state.moneyLogs.length > 0 && (
+        {this.state.decryptedMoneyLogs.length > 0 && (
           <div style={{ marginTop: '10px' }}>
             <Totals
               getTotalAvailable={this.getTotalAvailable}

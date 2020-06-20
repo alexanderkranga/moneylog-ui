@@ -16,7 +16,7 @@ describe('one time events should be calculated correctly', () => {
       currency: 'MDL',
       description: 'iznachalino',
       log_type: 'RECEIVED',
-      log_frequency: 'ONE_TIME'
+      log_frequency: 'ONE_TIME',
     };
     moneyEngine.loadEvents([oneTimeLog]);
     expect(moneyEngine.get(now)).toEqual(20000);
@@ -30,7 +30,7 @@ describe('one time events should be calculated correctly', () => {
       currency: 'MDL',
       description: 'iznachalino',
       log_type: 'RECEIVED',
-      log_frequency: 'ONE_TIME'
+      log_frequency: 'ONE_TIME',
     };
     moneyEngine.loadEvents([oneTimeLog]);
     expect(moneyEngine.get(moment().subtract(1, 'seconds'))).toEqual(0);
@@ -43,7 +43,7 @@ describe('one time events should be calculated correctly', () => {
       currency: 'MDL',
       description: 'iznachalino',
       log_type: 'RECEIVED',
-      log_frequency: 'ONE_TIME'
+      log_frequency: 'ONE_TIME',
     };
     const oneTimeLog2 = {
       created_date: moment().add(50, 'minutes'),
@@ -51,7 +51,7 @@ describe('one time events should be calculated correctly', () => {
       currency: 'MDL',
       description: 'potom',
       log_type: 'RECEIVED',
-      log_frequency: 'ONE_TIME'
+      log_frequency: 'ONE_TIME',
     };
     moneyEngine.loadEvents([oneTimeLog, oneTimeLog2]);
     expect(moneyEngine.get(moment().subtract(1, 'seconds'))).toEqual(0);
@@ -64,7 +64,7 @@ describe('one time events should be calculated correctly', () => {
       currency: 'MDL',
       description: 'iznachalino',
       log_type: 'RECEIVED',
-      log_frequency: 'ONE_TIME'
+      log_frequency: 'ONE_TIME',
     };
     const oneTimeLog2 = {
       created_date: moment().subtract(20, 'minutes'),
@@ -72,7 +72,7 @@ describe('one time events should be calculated correctly', () => {
       currency: 'MDL',
       description: 'pered',
       log_type: 'RECEIVED',
-      log_frequency: 'ONE_TIME'
+      log_frequency: 'ONE_TIME',
     };
     moneyEngine.loadEvents([oneTimeLog, oneTimeLog2]);
     expect(moneyEngine.get(moment().subtract(1, 'seconds'))).toEqual(200);
