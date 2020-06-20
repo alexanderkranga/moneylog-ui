@@ -1,5 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import MoneyLog from './MoneyLog';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<MoneyLog />, document.getElementById('root'));

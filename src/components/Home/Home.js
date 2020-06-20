@@ -1,20 +1,15 @@
 import React, { Component } from 'react';
-import restclient from '../restclient';
+import restclient from '../../restclient';
 import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import EventForm from './EventForm';
+import EventForm from '../EventForm/EventForm';
 import { Bar } from 'react-chartjs-2';
 import * as moment from 'moment';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import MoneyEngine from '../services/moneyengine';
+import MoneyEngine from '../../services/moneyengine';
+import Totals from '../Totals/Totals';
+import Calculator from '../Calculator/Calculator';
+import History from '../History/History';
 
 class Home extends Component {
   constructor(props) {
@@ -23,19 +18,12 @@ class Home extends Component {
       moneyLogs: [],
       logToUpdate: null,
       targetDate: moment(),
-      targetAmount: '',
     };
   }
 
   handleTargetDateChange = (targetDate) => {
     this.setState({
       targetDate,
-    });
-  };
-
-  handleTargetAmountChange = (event) => {
-    this.setState({
-      targetAmount: event.target.value,
     });
   };
 
@@ -279,72 +267,13 @@ class Home extends Component {
         </Paper>
         {this.state.moneyLogs.length > 0 && (
           <div style={{ marginTop: '10px' }}>
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Totals</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    width: '100%',
-                  }}
-                >
-                  {this.getTotalAvailable()}
-                  {this.getTotalSpent()}
-                  {this.getMonthlyDataset()}
-                </div>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Calculate</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    width: '100%',
-                  }}
-                >
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <Grid item xs={12}>
-                      <DateTimePicker
-                        format="MM/dd/yyyy HH:mm"
-                        id="dateInput"
-                        label="Choose date"
-                        fullWidth
-                        value={this.state.targetDate}
-                        onChange={this.handleTargetDateChange}
-                        showTodayButton
-                      />
-                    </Grid>
-                    {this.getTotalAvailable(this.state.targetDate)}
-                  </MuiPickersUtilsProvider>
-                </div>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>History</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    width: '100%',
-                  }}
-                >
-                  {this.getLogRows()}
-                </div>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
+            <Totals
+              getTotalAvailable={this.getTotalAvailable}
+              getTotalSpent={this.getTotalSpent}
+              getMonthlyDataset={this.getMonthlyDataset}
+            />
+            <Calculator getTotalAvailable={this.getTotalAvailable} />
+            <History getLogRows={this.getLogRows} />
           </div>
         )}
       </main>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import MainApp from './components/MainApp';
-import SignIn from './components/SignIn';
+import Home from './components/Home/Home';
+import SignIn from './components/SignIn/SignIn';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import restclient from './restclient';
@@ -59,7 +59,7 @@ class App extends Component {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         {this.state.authenticated ? (
-          <MainApp username={this.state.username} />
+          <Home username={this.state.username} />
         ) : (
           <SignIn
             login={this.login}
